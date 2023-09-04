@@ -1,5 +1,4 @@
 #Imports
-
 from typing import ContextManager
 import openai
 import os
@@ -43,7 +42,7 @@ def initsave(file):
     f.close()
   except:
     
-    if os.path.getsize('savefile.txt') == 0:
+    if os.path.getsize(file) == 0:
       print("File is empty!") 
       return False
     else:
@@ -127,10 +126,11 @@ ExitBtn.pack()
 print("Loading AI...")
 try:
   wait()
+  if initsave("APIKey.txt") == False:
+    print("ERROR: API KEY NEEDED")
   openai.checkconnection()
 except:
   pass
-print("ERROR: API KEY NEEDED")
 wait()
 print("Loading GUI..")
 wait()
@@ -169,8 +169,9 @@ elif loadSave == True:
   file = f.readline()
   OPENAIAPI = str(file)
   f.close()
-  
+
 openai.api_key = OPENAIAPI
+
 
 try:
   test = GPT.askGPT(openai, [ {"role": "system", "content": "Test"}])
@@ -312,80 +313,4 @@ while True:
 
 
 
-
-
-
-
-
 root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ##Main Conversation
-# history = GPT.askGPT(g4f, (
-#     "Use this prompt to generate the start of a story which will allow the user to finish it.",
-#     str(startPrompt)), False)
-# print(history, flush=True, end='\n')
-# print("\n")
-
-
-
-# def updatedisplay(new_text):
-#     display_label.config(text=new_text)
-
-# def update_display_periodically():
-#     updatedisplay(history)
-#     window.after(1000, update_display_periodically) 
-
-
-# update_display_periodically()
-
-# window.mainloop()
-
-
-
-
-
-
-# while True:
-#   message = input("User: ")
-#   while True:
-#     try:
-#       response = str(GPT.askGPT(g4f, (str(history), str(message)), False))
-#       print(response, flush=True, end="")
-#       history += response
-#       print("\n")
-  
-#     except:
-#       response = str(GPT.askGPT(g4f, (str(history), str(message)), False))
-#       print(response, flush=True, end="\n")
-#       history += response
