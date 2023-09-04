@@ -1,15 +1,14 @@
 #Imports
+
 from typing import ContextManager
 import openai
 import os
-
-OPENAIAPI = "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"
-openai.api_key = OPENAIAPI
 
 import GPT as GPT
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
 from os import system
 import time
 import random
@@ -18,11 +17,11 @@ from tkinter import messagebox
 
 
 #functions
-def screenclear():
+def clear():
   try:
-    system("clear")
+    system('clear')
   except:
-    system('cls')
+    system("cls")
 
 def numlist(list):
   optionslist = ""
@@ -36,9 +35,9 @@ def numlist(list):
 def wait():
   time.sleep(random.randint(1, 3))
 
-def initsave():
+def initsave(file):
   try:
-    f = open("savefile.txt", "x")
+    f = open(file, "x")
     return False
     
     f.close()
@@ -88,10 +87,10 @@ def save():
   
 
 def storyDone():
-  screenclear()
+  clear()
   root.destroy()
   print("Thanks for playing! If you pressed SAVE you can find your story in the 'story.txt' file. You can load any story from where you left off by placing it in the 'story.txt file' otherwise clear it to start a new story")
-  system.exit()
+  sys.exit()
 
 
 
@@ -127,14 +126,17 @@ ExitBtn.pack()
 #Setup AI and Clear error messages
 print("Loading AI...")
 try:
+  wait()
   openai.checkconnection()
 except:
   pass
-
+print("ERROR: API KEY NEEDED")
 wait()
 print("Loading GUI..")
 wait()
-loadSave = initsave()
+
+loadSave = initsave("savefile.txt")
+
 if loadSave == True:
   print("Savefile found! Loading...")
   
@@ -142,16 +144,53 @@ else:
   print("No savefile found. Creating new savefile...")
 
 wait()
-screenclear()
+clear()
 print("Ready!", end="\r")
 time.sleep(1)
 print("        ", end="\r")
 
 
 
+
+
+##OPENAI API
+story = ""
+
+loadSave = initsave("APIKey.txt")
+if loadSave == False:
+  story += "Enter API Key and click Submit... \n"
+  updateDisplay()
+  
+  SubmitBtn.wait_variable(submitInt)
+  OPENAIAPI = str(userInput)
+
+elif loadSave == True:
+  f = open("APIKey.txt", "r")
+  file = f.readline()
+  OPENAIAPI = str(file)
+  f.close()
+  
+openai.api_key = OPENAIAPI
+
+try:
+  test = GPT.askGPT(openai, [ {"role": "system", "content": "Test"}])
+  story += "API Key Accepted - Loading Story... \n"
+  updateDisplay()
+
+except:
+  story += "ERROR API KEY REJECTED"
+  updateDisplay()
+  time.sleep(4)
+  sys.exit()
+  
+updateDisplay()
+root.update_idletasks()
+
+
 ##Setup User Story
 prompt = ""
 story = ""
+updateDisplay()
 if loadSave == False:
   setup = False
   choice = 0
@@ -181,20 +220,20 @@ if loadSave == False:
         time.sleep(1)
         print("                           ", end="\r")
         time.sleep(1)
-        screenclear()
+        clear()
         wait()
   
         numups = numlist(options)
         choice = int(input(f"{numups}: ")) - 1
   
       setup = True
-      screenclear()
+      clear()
   
     except:
       print("Please select an option", end="\r")
       time.sleep(1)
       print("                           ", end="\r")
-      screenclear()
+      clear()
       wait()
     
     
